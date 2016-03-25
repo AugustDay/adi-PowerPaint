@@ -1,0 +1,51 @@
+/*
+ * TCSS 305: Assignment 5 - PowerPaint
+ * PowerPaintGUI Class
+ */
+
+package gui;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+/**
+ * Class for creating the PowerPaint GUI. 
+ * @author Austin Ingraham
+ * @version 9 November 2015
+ */
+public final class PowerPaintGUI extends JPanel {
+
+    /** Serial ID for PowerPaintGUI. */
+    private static final long serialVersionUID = 2144639768936849562L;
+    
+    /** JFrame window which holds the content. */
+    private final JFrame myWindow;
+    
+    
+    public PowerPaintGUI() {
+        super();
+        
+        myWindow = new JFrame("PowerPaint");
+    }
+    
+    public void start() {
+        myWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        myWindow.setContentPane(this);
+        myWindow.pack();
+        myWindow.setMinimumSize(new Dimension(myWindow.getSize()));
+        myWindow.setVisible(true);
+    }
+}

@@ -1,0 +1,33 @@
+/*
+ * TCSS 305: Assignment 5 - PowerPaint
+ * Abstract Tool Class
+ */
+
+package tools;
+
+/**
+ * Abstract superclass for the PowerPaint tools.
+ * @author Austin Ingraham
+ * @version 18 November 2015 
+ */
+public abstract class AbstractTool implements ToolInterface {
+
+    /** Name of this tool. */
+    private final String myName;
+    
+    /** 
+     * Abstract constructor to create a generic tool. 
+     * @param theName String name of this tool. 
+     */
+    public AbstractTool(final String theName) {
+        myName = theName;
+    }
+    
+    /**
+     * Getter which returns this tool's name.
+     * @return myName String name of this tool.
+     */
+    public String getToolName() {
+        return myName;
+    }
+}

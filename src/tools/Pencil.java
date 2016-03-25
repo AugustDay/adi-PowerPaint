@@ -1,0 +1,68 @@
+/*
+ * TCSS 305: Assignment 5 - PowerPaint
+ * Pencil Tool Class
+ */
+
+package tools;
+
+import java.awt.Shape;
+import java.awt.geom.GeneralPath;
+
+/**
+ * Tool class to draw a pencil path on the drawing panel. 
+ * @author Austin Ingraham
+ * @version 20 November 2015
+ */
+public final class Pencil extends AbstractTool implements ToolInterface {
+
+    /** String name of this tool. */
+    private static final String MY_NAME = "Pencil";
+    
+    /** String constant representing the short description of this tool. */
+    private static final String MY_DESCRIPTION = "Draws a freeform path on the drawing panel.";
+    
+    /** The path of the pencil line being drawn. */
+    private GeneralPath myPath;
+    
+    /** Constructor for the pencil tool. */
+    public Pencil() {
+        super(MY_NAME, MY_DESCRIPTION);
+    }
+    
+    /**
+     * Method which starts creating a pencil's path, at the given X and Y values.
+     * 
+     * @param theX int representing an X value on the Cartesian coordinate plane.
+     * @param theY int representing an Y value on the Cartesian coordinate plane.
+     * @return a general path shape at these coordinates.
+     */
+    public Shape start(final int theX, final int theY) {
+        myPath = new GeneralPath();
+        myPath.moveTo(theX, theY);
+        return myPath;
+    }
+
+    /**
+     * Method which continues creating a pencil's path, at the given X and Y values.
+     * 
+     * @param theX int representing an X value on the Cartesian coordinate plane.
+     * @param theY int representing an Y value on the Cartesian coordinate plane.
+     * @return a general path shape at these coordinates.
+     */
+    public Shape shift(final int theX, final int theY) {
+        myPath.lineTo(theX, theY);
+        return myPath;
+    }
+
+    /**
+     * Method which finishes creating a pencil's path, at the given X and Y values.
+     * 
+     * @param theX int representing an X value on the Cartesian coordinate plane.
+     * @param theY int representing an Y value on the Cartesian coordinate plane.
+     * @return a general path shape at these coordinates.
+     */
+    public Shape end(final int theX, final int theY) {
+        myPath.lineTo(theX, theY);
+        return myPath;
+    }
+}

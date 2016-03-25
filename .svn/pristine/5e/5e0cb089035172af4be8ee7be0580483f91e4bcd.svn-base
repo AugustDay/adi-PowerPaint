@@ -1,0 +1,125 @@
+/*
+ * TCSS 305: Assignment 5 - PowerPaint
+ * Tool Action 
+ */
+
+package actions;
+
+import gui.DrawingPanel;
+import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.AbstractAction;
+import tools.ToolInterface;
+
+/**
+ * Action class for the PowerPaintGUI tools.
+ *  @author Austin Ingraham
+ *  @version 19 November 2015 
+ */
+public final class ToolAction extends AbstractAction {
+    
+    /** SerialVersionUID for this action class. */
+    private static final long serialVersionUID = 597612009193223789L;
+
+    /** DrawingPanel to draw upon. */
+    private final DrawingPanel myDrawingPanel;
+    
+    /** The tool that this action is connected to. */
+    private final ToolInterface myTool;
+    
+    /** The shape being drawn by the tool. */
+    private Shape myShape;
+    
+    /**
+     * Constructor for this tool action. 
+     * Instantiates the action listener and adds it to the DrawingPanel.
+     * 
+     * @param theTool This action's tool.
+     * @param thePanel DrawingPanel to add listeners to.
+     */
+    public ToolAction(final ToolInterface theTool, final DrawingPanel thePanel) {
+        super(theTool.getToolName()); //TODO maybe change getName to toString
+        myTool = theTool;
+        myDrawingPanel = thePanel;
+        
+        final ToolListener listener = new ToolListener();
+        myDrawingPanel.addMouseListener(listener);
+        myDrawingPanel.addMouseMotionListener(listener);
+        
+        //TODO sets SelectedTool to this one
+        myDrawingPanel.setSelectedTool(myTool);
+    }
+    
+    /**
+     * When this tool is selected, passes the tool to drawingPanel as the active one.
+     * @param theEvent a button press of the tool button.
+     */
+    @Override
+    public void actionPerformed(final ActionEvent theEvent) {
+        myDrawingPanel.setSelectedTool(myTool);
+        System.out.println(myTool + " selected");
+        
+    }
+    
+    /**
+     * Returns the Mnemonic key of this tool (first letter of name).
+     * @return KeyCode the Mnemonic.
+     */
+    public int getMnemonicKey() {
+        return KeyEvent.getExtendedKeyCodeForChar(myTool.getToolName().charAt(0));
+    }
+    
+    public ToolInterface getTool() {
+        return myTool;
+    }
+    
+    /**
+     * Listener class for the PowerPaint tools. 
+     * When pressed, this listener will call to the tool class to create a shape.
+     * @author Austin Ingraham
+     * @version 18 November 2015
+     */
+    private class ToolListener extends MouseAdapter {
+        
+        /**
+         * Method to handle when a mouse initially presses on the DrawingPanel. 
+         * @param theEvent location of mouse press, starts a shape at this location.
+         */
+        @Override
+        public void mousePressed(final MouseEvent theEvent) {
+            if (myTool.getClass().equals(myDrawingPanel.getSelectedTool().getClass())) {
+                myShape = myTool.start(theEvent.getX(), theEvent.getY());
+                myDrawingPanel.setCurrentShape(myShape);
+                myDrawingPanel.repaint();
+            }
+        }
+    
+        /**
+         * Method to handle when a mouse drags across the DrawingPanel. 
+         * @param theEvent location of mouse drag, draws a shape at this location.
+         */
+        @Override
+        public void mouseDragged(final MouseEvent theEvent) {
+            if (myTool.getClass().equals(myDrawingPanel.getSelectedTool().getClass())) {
+                myShape = myTool.shift(theEvent.getX(), theEvent.getY());
+                myDrawingPanel.setCurrentShape(myShape);
+                myDrawingPanel.repaint();
+            }
+        }
+    
+        /**
+         * Method to handle when a mouse releases up from the DrawingPanel. 
+         * @param theEvent location of mouse release, finishes a shape at this location.
+         */
+        @Override
+        public void mouseReleased(final MouseEvent theEvent) {
+            if (myTool.getClass().equals(myDrawingPanel.getSelectedTool().getClass())) {
+                myDrawingPanel.addFinishedShape(myShape);
+                myDrawingPanel.repaint();
+            }
+        }
+    }
+}

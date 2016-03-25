@@ -1,0 +1,80 @@
+/*
+ * TCSS 305: Assignment 5 - PowerPaint
+ * DrawingPanel Class
+ */
+
+package gui;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JPanel;
+import javax.swing.event.MouseInputAdapter;
+
+/**
+ * Class for handling the drawing panel of the GUI upon which the user draws.
+ * Based on the DrawingArea demo written by Charles Bryan.
+ *  @author Austin Ingraham
+ *  @version 10 November 2015 
+ */
+public class DrawingPanel extends JPanel {
+    
+    /**  A generated serial version UID for object Serialization. */
+    private static final long serialVersionUID = 1144639778936649562L;
+    
+    /** The default width value. */
+    private static final int DEFAULT_WIDTH = 400; 
+    
+    /** The default height value. */
+    private static final int DEFAULT_HEIGHT = 200;
+    
+    /** The minimum size this component should be. */
+    private static final Dimension MIN_SIZE = new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    
+    /** Boolean value to track if this is the first mouse-click or second. */
+    private boolean myDraw;
+    
+ 
+    /** Constructs a blank, white drawing area. */
+    public DrawingPanel() {
+        super();
+        
+        myDraw = false;
+        
+        setBackground(Color.white);
+        setOpaque(true);
+
+        addMouseListener(new MyMouseInputAdapter());
+    }
+    
+    @Override
+    protected void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+    };
+ 
+    @Override
+    public Dimension getMinimumSize() {
+        return MIN_SIZE;
+    }
+ 
+    @Override
+    public Dimension getPreferredSize() {
+        return MIN_SIZE;
+    }
+    
+    /**
+     * MouseInputAdapter class to create the shapes.
+     * 
+     * @author Austin Ingraham
+     * @version 10 November 2015 
+     */
+    class MyMouseInputAdapter extends MouseInputAdapter {
+
+        @Override
+        public void mouseClicked(final MouseEvent theEvent) {
+            myDraw = !myDraw;
+        }
+    }
+}

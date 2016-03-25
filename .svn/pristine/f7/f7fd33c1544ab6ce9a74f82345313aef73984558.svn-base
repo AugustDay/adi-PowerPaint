@@ -1,0 +1,33 @@
+package tools;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Shape;
+import java.awt.Stroke;
+
+public final class PaintObject {
+    
+    private final Stroke myThickness;
+
+    private final Shape myShape;    
+    
+    private final Color myColor;
+
+    public PaintObject(final Shape theShape, final int theThickness, final Color theColor) {
+        myThickness = new BasicStroke(theThickness);
+        myShape = theShape;
+        myColor = theColor;
+    }
+    
+    public Stroke getThickness() {
+        return myThickness;
+    }
+    
+    public Shape getShape() {
+        return myShape;
+    }
+    
+    public Color getColor() {
+        return myColor;
+    }
+}

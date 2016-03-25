@@ -1,0 +1,46 @@
+/*
+ * TCSS 305: Assignment 5 - PowerPaint
+ * Tool Interface
+ */
+
+package tools;
+
+import java.awt.Shape;
+
+/**
+ * Interface for the tool classes. 
+ *  @author Austin Ingraham
+ *  @version 16 November 2015 
+ */
+public interface ToolInterface {
+
+    /**
+     * Begins drawing a shape using the tool at the given X and Y coordinates.
+     * @param theX starting X coordinate on DrawingPanel
+     * @param theY starting y coordinate on DrawingPanel
+     * @return Shape the shape to be drawn
+     */
+    Shape start(final int theX, final int theY);
+    
+    /**
+     * Continues drawing a shape using the tool at the given X and Y coordinates.
+     * @param theX moving X coordinate on DrawingPanel
+     * @param theY moving y coordinate on DrawingPanel
+     * @return Shape the shape being drawn
+     */
+    Shape shift(final int theX, final int theY);
+    
+    /**
+     * Finishes drawing a shape using the tool at the given X and Y coordinates.
+     * @param theX ending X coordinate on DrawingPanel
+     * @param theY ending y coordinate on DrawingPanel
+     * @return Shape the shape that has been drawn.
+     */
+    Shape end(final int theX, final int theY);
+    
+    /**
+     * The name of this tool, for use in displaying it on the toolbar/menu in gui.
+     * @return toolName the String name of this tool.
+     */
+    String getToolName();
+}

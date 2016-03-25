@@ -1,0 +1,196 @@
+/*
+ * TCSS 305: Assignment 5 - PowerPaint
+ * PowerPaintGUI Class
+ */
+
+package gui;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.io.*;
+
+import javax.swing.*;
+
+/**
+ * Class for creating the PowerPaint GUI. 
+ * @author Austin Ingraham
+ * @version 9 November 2015
+ */
+public final class PowerPaintGUI extends JPanel {
+
+    /** Serial ID for PowerPaintGUI. */
+    private static final long serialVersionUID = 2144639768936849562L;
+    
+    /** JFrame window which holds the content. */
+    private final JFrame myWindow;
+    
+    /** Component to represent a menu bar at the top of the window. */
+    private final JMenuBar myMenuBar;
+    
+    /** Component to represent a toolbar at the bottom of the window. */
+    private final JToolBar myToolBar;
+    
+    /** ButtonGroup to hold the ToolBar radio buttons. */
+    private final ButtonGroup myToolGroup;
+    
+    /**
+     * //TODO finish!
+     */
+    public PowerPaintGUI() {
+        super(); //TODO pass new BorderLayout?
+        
+        myWindow = new JFrame("PowerPaint");
+        myMenuBar = new JMenuBar(); //TODO name these?
+        myToolBar = new JToolBar();
+        myToolGroup = new ButtonGroup();
+    }
+    
+    public void start() {
+        setUpComponents();
+        
+        myWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        myWindow.setContentPane(this);
+        myWindow.pack();
+        myWindow.setMinimumSize(new Dimension(myWindow.getSize()));
+        myWindow.setVisible(true);
+    }
+    
+    public void setUpComponents() {
+        setLayout(new BorderLayout());
+        
+        final ImageIcon icon = new ImageIcon("images/w.gif");
+        myWindow.setIconImage(icon.getImage());
+        
+        buildMenuBar(); // ADD TOP-LEVEL MENU ITEMS
+        myWindow.setJMenuBar(myMenuBar);
+    }
+    
+    private void buildMenuBar() {
+        myMenuBar.add(buildFileMenu()); //FILE MENU
+        myMenuBar.add(buildOptionsMenu());
+        myMenuBar.add(buildToolsMenu());
+        myMenuBar.add(buildHelpMenu());
+    }
+    
+    /**
+     * Builds a menu with some options. 
+     * 
+     * @return a "file" menu with some menu items
+     */
+    private JMenu buildFileMenu() { //TODO make this method mine!
+        final JMenu menu = new JMenu("File");
+        final JMenuItem undoItem = new JMenuItem("Undo All");
+        final JMenuItem exitItem = new JMenuItem("Exit");
+        
+        undoItem.setToolTipText("Removes all drawn shapes.");
+        exitItem.setToolTipText("Exits the program.");
+        
+        menu.setMnemonic(KeyEvent.VK_F);
+        undoItem.setMnemonic(KeyEvent.VK_U);
+        exitItem.setMnemonic(KeyEvent.VK_X);
+
+        menu.add(undoItem);
+        menu.addSeparator();
+        menu.add(exitItem);
+        return menu;
+    }
+    
+    private JMenu buildOptionsMenu() {
+        final JMenu menu = new JMenu("Options");
+        
+        menu.setMnemonic(KeyEvent.VK_O);
+        
+        menu.add(buildGridCheckBox());
+        menu.addSeparator();
+        menu.add(buildThicknessSubMenu());
+        menu.addSeparator();
+        menu.add(buildColorChooser());
+        return menu;
+    }
+    
+    private JCheckBoxMenuItem buildGridCheckBox() {
+        final JCheckBoxMenuItem gridCheckBox = new JCheckBoxMenuItem();
+        final String onMsg = "Grid ON/off";
+        final String offMsg = "Grid on/OFF";
+        gridCheckBox.setText(offMsg);
+       
+        gridCheckBox.setToolTipText("When checked, covers the drawing panel with a grid.");
+        
+        gridCheckBox.setMnemonic(KeyEvent.VK_G);
+        gridCheckBox.setSelected(false);
+
+        return gridCheckBox;
+    }
+    
+    private JMenu buildThicknessSubMenu() {
+        final JMenu thicknessSub = new JMenu("Thickness");
+        final JSlider thickSlider = new JSlider(0, 20);
+        thickSlider.setMajorTickSpacing(5);
+        thickSlider.setMinorTickSpacing(1);
+        //TODO need labels on major tick spacing
+        
+        thickSlider.setValue(1);
+        thicknessSub.setMnemonic(KeyEvent.VK_T);
+        thicknessSub.add(thickSlider);
+        return thicknessSub;
+    }
+    
+    private JMenuItem buildColorChooser() {
+        final JMenuItem chooseColor = new JMenuItem("Color...");
+        chooseColor.setMnemonic(KeyEvent.VK_C);
+    
+        //TODO finish color chooser logic
+        return chooseColor;
+    }
+    
+    private JMenu buildToolsMenu() {
+        final JMenu menu = new JMenu("Tools");
+        final JRadioButtonMenuItem pencilRadio = new JRadioButtonMenuItem("Pencil");
+        final JRadioButtonMenuItem lineRadio = new JRadioButtonMenuItem("Line");
+        final JRadioButtonMenuItem rectangleRadio = new JRadioButtonMenuItem("Rectangle");
+        final JRadioButtonMenuItem ellipseRadio = new JRadioButtonMenuItem("Ellipse");
+
+        menu.setMnemonic(KeyEvent.VK_T);
+        pencilRadio.setMnemonic(KeyEvent.VK_P);
+        lineRadio.setMnemonic(KeyEvent.VK_L);
+        rectangleRadio.setMnemonic(KeyEvent.VK_R);
+        ellipseRadio.setMnemonic(KeyEvent.VK_E);
+
+        myToolGroup.add(pencilRadio);
+        myToolGroup.add(lineRadio);
+        myToolGroup.add(rectangleRadio);
+        myToolGroup.add(ellipseRadio);
+        
+        menu.add(pencilRadio);
+        menu.add(lineRadio);
+        menu.add(rectangleRadio);
+        menu.add(ellipseRadio);
+        
+        return menu;
+    }
+    
+    private JMenu buildHelpMenu() {
+        final JMenu menu = new JMenu("Help");
+        final JMenuItem aboutPopUp = new JMenuItem("About...");
+        
+        aboutPopUp.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) { 
+                final String message = "TCSS 305 PowerPaint, Autumn 2015. By Austin Ingraham"; 
+                javax.swing.JOptionPane.showMessageDialog(null, message, 
+                                      "About", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        
+        menu.setMnemonic(KeyEvent.VK_H);
+        aboutPopUp.setMnemonic(KeyEvent.VK_A);
+        
+        menu.add(aboutPopUp);
+        
+        return menu;
+    }
+}

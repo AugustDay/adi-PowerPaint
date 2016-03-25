@@ -1,0 +1,331 @@
+/*
+ * TCSS 305: Assignment 5 - PowerPaint
+ * PowerPaintGUI Class
+ */
+
+package gui;
+
+import actions.ToolAction;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSlider;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import tools.Ellipse;
+import tools.Line;
+import tools.Pencil;
+import tools.Rectangle;
+
+/**
+ * Class for creating the PowerPaint GUI. 
+ * @author Austin Ingraham
+ * @version 9 November 2015
+ */
+public final class PowerPaintGUI extends JPanel {
+
+    /** Serial ID for PowerPaintGUI. */
+    private static final long serialVersionUID = 2144639768936849562L;
+    
+    /** JFrame window which holds the content. */
+    private final JFrame myWindow;
+    
+    /** Component to represent a menu bar at the top of the window. */
+    private final JMenuBar myMenuBar;
+    
+    /** Component to represent a toolbar at the bottom of the window. */
+    private final JToolBar myToolBar;
+    
+    /** Area to paint shapes/lines. */
+    private final DrawingPanel myDrawingPanel;
+    
+    /** Undo button which, when pressed, clears all painted shapes. */
+    private final JMenuItem myUndoAll; //TODO could be declared locally?
+    
+    /** List of tool actions for adding to menu items/bar. */
+    private final List<ToolAction> myToolActions;
+    
+    /** Constructor for the PowerPaint GUI. */
+    public PowerPaintGUI() {
+        super(); //TODO pass new BorderLayout?
+        
+        myWindow = new JFrame("PowerPaint");
+        myMenuBar = new JMenuBar(); 
+        myToolBar = new JToolBar("Drawing Tools");
+        myDrawingPanel = new DrawingPanel();
+        myToolActions = new ArrayList<ToolAction>();
+        
+        myUndoAll = new JMenuItem("Undo all changes", KeyEvent.VK_U);
+    }
+    
+    /** Start method to create and display the GUI. */
+    public void start() {
+        setUpComponents();
+        
+        myWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        myWindow.setContentPane(this);
+        myWindow.pack();
+        myWindow.setMinimumSize(new Dimension(myWindow.getSize()));
+        myWindow.setVisible(true);
+    }
+    
+    /** SetUp method to prepare the components of the GUI for display. */
+    private void setUpComponents() {
+        setLayout(new BorderLayout());
+        
+        final ImageIcon icon = new ImageIcon("images/w.gif");
+        myWindow.setIconImage(icon.getImage());
+        
+        buildActionList();
+        buildMenuBar(); // ADD TOP-LEVEL MENU ITEMS
+        buildToolBar();
+        myWindow.setJMenuBar(myMenuBar);
+        add(myDrawingPanel, BorderLayout.CENTER);
+        add(myToolBar, BorderLayout.PAGE_END);
+    }
+    
+    /** Method to create the actions for the powerPaint tools.
+     *  Adds them to a list for access later. 
+     */
+    private void buildActionList() {
+        final Pencil defaultTool = new Pencil();
+        myToolActions.add(new ToolAction(defaultTool, myDrawingPanel));
+        myToolActions.add(new ToolAction(new Line(), myDrawingPanel));
+        myToolActions.add(new ToolAction(new Rectangle(), myDrawingPanel));
+        myToolActions.add(new ToolAction(new Ellipse(), myDrawingPanel));
+        myDrawingPanel.setSelectedTool(defaultTool); //sets the initial tool to be a pencil.
+    }
+    
+    /** Top-level helper method to create the menu bar displayed at top of window. */
+    private void buildMenuBar() {
+        myMenuBar.add(buildFileMenu()); //FILE MENU
+        myMenuBar.add(buildOptionsMenu());
+        myMenuBar.add(buildToolsMenu());
+        myMenuBar.add(buildHelpMenu());
+    }
+    
+    /**
+     * Builds the File menu of the menu bar.
+     * 
+     * @return menu with some menu items.
+     */
+    private JMenu buildFileMenu() { 
+        final JMenu menu = new JMenu("File");
+        final JMenuItem exitItem = new JMenuItem("Exit", KeyEvent.VK_X);
+        
+        myUndoAll.setToolTipText("Removes all drawn shapes.");
+        exitItem.setToolTipText("Exits the program.");
+        
+        menu.setMnemonic(KeyEvent.VK_F);
+
+        myUndoAll.setEnabled(false); //starts disabled.
+        exitItem.addActionListener(new ActionListener() {
+          
+            public void actionPerformed(final ActionEvent theEvent) {
+                myWindow.dispose(); //TODO don't dispose!
+            }
+        });
+        
+        menu.add(myUndoAll);
+        menu.addSeparator();
+        menu.add(exitItem);
+        return menu;
+    }
+    
+    /**
+     * Builds the Options menu of the menu bar.
+     * 
+     * @return menu with some menu items.
+     */
+    private JMenu buildOptionsMenu() {
+        final JMenu menu = new JMenu("Options");
+        
+        menu.setMnemonic(KeyEvent.VK_O);
+        
+        menu.add(buildGridCheckBox());
+        menu.addSeparator();
+        menu.add(buildThicknessSubMenu());
+        menu.addSeparator();
+        menu.add(buildColorChooser());
+        return menu;
+    }
+    
+    /**
+     * Builds the GridCheckBox menu item for the Options menu.
+     * When clicked, toggles a grid overlay on/off.
+     * 
+     * @return JCheckBoxMenuItem to toggle grid overlay.
+     */
+    private JCheckBoxMenuItem buildGridCheckBox() {
+        final JCheckBoxMenuItem gridCheckBox = new JCheckBoxMenuItem("Grid");
+        gridCheckBox.addActionListener(new ActionListener() {
+            
+            public void actionPerformed(final ActionEvent theEvent) {
+                System.out.println("Check box" + gridCheckBox.isSelected());
+                //TODO grid button functionality.
+            }
+        });
+       
+        gridCheckBox.setToolTipText("When checked, covers the drawing panel with a grid.");
+        
+        gridCheckBox.setMnemonic(KeyEvent.VK_G);
+
+        return gridCheckBox;
+    }
+    
+    /**
+     * Builds the Thickness sub-menu for the Options menu.
+     * When clicked, displays a slider to choose variable thickness for drawing tools.
+     * 
+     * @return menu with some menu items.
+     */
+    private JMenu buildThicknessSubMenu() {
+        final JMenu thicknessSub = new JMenu("Thickness");
+        final JSlider thickSlider = new JSlider(0, 20, 1);
+        final int majorThickness = 5;
+        thickSlider.setMajorTickSpacing(majorThickness);
+        thickSlider.setMinorTickSpacing(1);
+        thickSlider.setPaintTicks(true);
+        thickSlider.setPaintLabels(true);
+        thickSlider.setSnapToTicks(true);
+        thickSlider.addChangeListener(new ChangeListener() {
+            
+            /** //TODO javadoc */
+            @Override
+            public void stateChanged(final ChangeEvent theEvent) {
+                final int thicknessValue = thickSlider.getValue(); //TODO clean this
+                myDrawingPanel.setThickness(thicknessValue);
+            }
+        });
+        
+        thicknessSub.setMnemonic(KeyEvent.VK_T);
+        thicknessSub.add(thickSlider);
+        return thicknessSub;
+    }
+    
+    /**
+     * Builds the Color Chooser sub-menu for the Options menu.
+     * When clicked, opens up the color-chooser interface to choose a drawing color.
+     * 
+     * @return menu with a color chooser.
+     */
+    private JMenuItem buildColorChooser() {
+        final JMenuItem chooseColor = new JMenuItem("Color...");
+        chooseColor.setMnemonic(KeyEvent.VK_C);
+        chooseColor.addActionListener(new ActionListener() {
+            
+            /**
+             * Method for choosing the color.
+             * @param theEvent a mouse-click.
+             */
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) { 
+                final Color result = JColorChooser.showDialog(null, "Choose a new color", 
+                                                              myDrawingPanel.getColor());
+                if (result != null) {
+                    chooseColor.setIcon(new ColorIcon(result));  
+                    myDrawingPanel.setColor(result);
+                }
+            }
+        });
+        chooseColor.setIcon(new ColorIcon(Color.BLACK));
+        
+        //TODO finish color chooser logic
+        return chooseColor;
+    }
+    
+    /**
+     * Builds the Tools menu for the menu bar.
+     * When clicked, displays a group of radio buttons for drawing on the drawing panel.
+     * 
+     * @return menu with some radio buttons.
+     */
+    private JMenu buildToolsMenu() {
+        final JMenu menu = new JMenu("Tools");
+        menu.setMnemonic(KeyEvent.VK_T);
+        
+        final ButtonGroup toolGroup = new ButtonGroup();
+        JRadioButtonMenuItem radio;
+        for (final ToolAction tool : myToolActions) {
+            radio = new JRadioButtonMenuItem(tool);
+            radio.setMnemonic(tool.getMnemonicKey());
+            radio.setToolTipText(tool.getTool().getToolDescription());
+            toolGroup.add(radio);
+            menu.add(radio);
+            if (radio.getText().equals(myDrawingPanel.getSelectedTool().getToolName())) {
+                radio.setSelected(true);
+            } 
+        }
+        
+        return menu;
+    }
+    
+    /**
+     * Builds the Help menu for the menu bar.
+     * When clicked, displays a pop-up with info about the PowerPaint program.
+     * 
+     * @return menu with some menu items.
+     */
+    private JMenu buildHelpMenu() {
+        final JMenu menu = new JMenu("Help");
+        final JMenuItem aboutPopUp = new JMenuItem("About...");
+        
+        aboutPopUp.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) { 
+                final String message = "TCSS 305 PowerPaint, Autumn 2015. By Austin Ingraham"; 
+                javax.swing.JOptionPane.showMessageDialog(null, message, 
+                                      "About", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        
+        menu.setMnemonic(KeyEvent.VK_H);
+        aboutPopUp.setMnemonic(KeyEvent.VK_A);
+        
+        menu.add(aboutPopUp);
+        
+        return menu;
+    }
+    
+    /** Builds the ToolBar which exists at the bottom of the layout. */
+    private void buildToolBar() {
+        final ButtonGroup toolGroup = new ButtonGroup();
+        
+        for (final ToolAction tool : myToolActions) {
+            final JToggleButton toggle = new JToggleButton(tool);
+            toggle.setMnemonic(tool.getMnemonicKey());
+            toggle.setToolTipText(tool.getTool().getToolDescription());
+            myToolBar.add(toggle);
+            toolGroup.add(toggle);
+            if (toggle.getText().equals(myDrawingPanel.getSelectedTool().getToolName())) {
+                toggle.setSelected(true);
+            } 
+            //TODO set icons!
+        }
+    }
+}
+
+
